@@ -49,13 +49,13 @@ const ResultsHistogram = ({ results, onClose }) => {
         data: frequencies,
         backgroundColor: Array.from({ length: 37 }, (_, i) => {
           // Use roulette colors: green for 0, red for certain numbers, black for others
-          if (i === 0) return 'rgba(0, 128, 0, 0.7)'; // Green for 0
+          if (i === 0) return 'rgba(0, 128, 0, 0.8)'; // Green for 0
           
           // Red numbers in European roulette: 1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36
           const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
           return redNumbers.includes(i) 
-            ? 'rgba(220, 53, 69, 0.7)' // Red
-            : 'rgba(52, 58, 64, 0.7)'; // Black
+            ? 'rgba(220, 53, 69, 0.8)' // Red
+            : 'rgba(0, 0, 0, 0.8)'; // Black (darker)
         }),
         borderColor: Array.from({ length: 37 }, (_, i) => {
           if (i === 0) return 'rgba(0, 128, 0, 1)';
@@ -72,6 +72,7 @@ const ResultsHistogram = ({ results, onClose }) => {
   // Chart options
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
@@ -108,7 +109,7 @@ const ResultsHistogram = ({ results, onClose }) => {
           color: '#ffffff'
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'rgba(255, 255, 255, 0.15)'
         }
       },
       y: {
@@ -122,12 +123,12 @@ const ResultsHistogram = ({ results, onClose }) => {
           color: '#ffffff'
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'rgba(255, 255, 255, 0.15)'
         }
       }
     },
     color: '#ffffff',
-    backgroundColor: '#333333'
+    backgroundColor: '#444444'
   };
 
   // Close modal when clicking outside
