@@ -47,12 +47,21 @@ const RouletteWheel = ({ config, onResult }) => {
       // Draw number text
       if (appearance.showNumbers) {
         ctx.save();
-        ctx.rotate(angle + anglePerNumber / 2);
-        ctx.translate(0, -radius + 30);
-        ctx.rotate(Math.PI / 2);
+        // Position at the middle of the segment
+        const textAngle = angle + anglePerNumber / 2;
+        // Move to the correct position in the pocket
+        const textRadius = radius - 30;
+        const textX = Math.cos(textAngle) * textRadius;
+        const textY = Math.sin(textAngle) * textRadius;
+        
+        ctx.translate(textX, textY);
+        // Rotate text to be readable from outside the wheel
+        ctx.rotate(textAngle + Math.PI / 2);
+        
         ctx.fillStyle = '#ffffff';
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
         ctx.fillText(number.toString(), 0, 0);
         ctx.restore();
       }
