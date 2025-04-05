@@ -17,10 +17,12 @@ export const defaultConfig = {
     historySize: 10         // Number of previous results to display in history
   },
   appearance: {
-    wheelDiameter: 380,     // Wheel diameter in pixels
+    wheelDiameter: 750,     // Wheel diameter in pixels
     ballSize: 8,            // Ball radius in pixels
     pocketSize: 25,         // Size of each number pocket
-    showNumbers: true       // Whether to show numbers on wheel
+    showNumbers: true,      // Whether to show numbers on wheel
+    numberFontSize: 18,     // Font size for wheel numbers in pixels
+    numberFont: 'Arial'     // Font family for wheel numbers
   }
 };
 

@@ -60,7 +60,10 @@ const RouletteWheel = ({ config, onResult }) => {
         ctx.rotate(textAngle + Math.PI / 2);
         
         ctx.fillStyle = '#ffffff';
-        ctx.font = '12px Arial';
+        // Use font size and font family from config
+        const fontSize = config.appearance.numberFontSize || 12;
+        const fontFamily = config.appearance.numberFont || 'Arial';
+        ctx.font = `${fontSize}px ${fontFamily}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(number.toString(), 0, 0);
