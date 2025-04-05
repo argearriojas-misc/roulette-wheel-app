@@ -2,16 +2,30 @@ import React, { useState } from 'react';
 import RouletteWheel from './components/RouletteWheel';
 import ConfigPanel from './components/ConfigPanel';
 import ResultDisplay from './components/ResultDisplay';
+import ResultHistory from './components/ResultHistory';
 import { defaultConfig } from './utils/configLoader';
 
 const App = () => {
   const [config, setConfig] = useState(defaultConfig);
   const [result, setResult] = useState(null);
+  const [resultHistory, setResultHistory] = useState([]);
   const [showConfig, setShowConfig] = useState(false);
+  
+  // Maximum number of results to keep in history
+  const maxHistoryResults = config.ui?.historySize || 10;
 
   // Handle result update from wheel
   const handleResult = (newResult) => {
     setResult(newResult);
+    // Add the new result to history (at the beginning)
+    if (newResult !== null) {
+      setResultHistory(prevHistory => {
+        // Create a new array with the new result at the beginning
+        const newHistory = [newResult, ...prevHistory];
+        // Limit the history size
+        return newHistory.slice(0, maxHistoryResults);
+      });
+    }
   };
 
   // Toggle config panel visibility
@@ -31,6 +45,8 @@ const App = () => {
       />
       
       <ResultDisplay result={result} show={config.ui.showResult} />
+      
+      <ResultHistory results={resultHistory} maxResults={maxHistoryResults} />
       
       <RouletteWheel config={config} onResult={handleResult} />
       

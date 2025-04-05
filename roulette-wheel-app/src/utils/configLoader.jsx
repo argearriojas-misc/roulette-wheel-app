@@ -13,7 +13,8 @@ export const defaultConfig = {
   ui: {
     showRunButton: true,    // Whether to show manual spin button
     autoSpin: false,        // Whether to spin automatically
-    showResult: true        // Whether to show last result
+    showResult: true,       // Whether to show last result
+    historySize: 10         // Number of previous results to display in history
   },
   appearance: {
     wheelDiameter: 380,     // Wheel diameter in pixels
