@@ -3,14 +3,19 @@ import RouletteWheel from './components/RouletteWheel';
 import ConfigPanel from './components/ConfigPanel';
 import ResultDisplay from './components/ResultDisplay';
 import ResultHistory from './components/ResultHistory';
+import ResultsHistogram from './components/ResultsHistogram';
 import { defaultConfig } from './utils/configLoader';
 import { setCookie, getCookie } from './utils/cookieUtils';
+
+// Import modal styles
+import './styles/modal.css';
 
 const App = () => {
   const [config, setConfig] = useState(defaultConfig);
   const [result, setResult] = useState(null);
   const [resultHistory, setResultHistory] = useState([]);
   const [showConfig, setShowConfig] = useState(false);
+  const [showHistogram, setShowHistogram] = useState(false);
   
   // Maximum number of results to keep in history
   const maxHistoryResults = config.ui?.historySize || 10;
@@ -104,6 +109,11 @@ const App = () => {
     setShowConfig(!showConfig);
   };
 
+  // Toggle statistics histogram modal
+  const toggleHistogram = () => {
+    setShowHistogram(!showHistogram);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center p-6 mx-auto max-w-4xl">
       <h1 className="mb-6 text-3xl font-bold">Argenis' Birthday Roulette</h1>
@@ -126,6 +136,25 @@ const App = () => {
           <ResultHistory results={resultHistory} maxResults={maxHistoryResults - 1} />
         </div>
       </div>
+
+      {/* Stats button */}
+      <button 
+        className="stats-button"
+        onClick={toggleHistogram}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M0 14h16v2H0v-2zm2-10h2v8H2V4zm4 2h2v6H6V6zm4-4h2v10h-2V2z"/>
+        </svg>
+        Show Statistics
+      </button>
+
+      {/* Results histogram modal */}
+      {showHistogram && (
+        <ResultsHistogram 
+          results={allResults.current} 
+          onClose={toggleHistogram}
+        />
+      )}
     </div>
   );
 };
