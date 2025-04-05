@@ -66,14 +66,14 @@ const App = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-6 mx-auto max-w-5xl">
-      <h1 className="mb-6 text-3xl font-bold">American Roulette Wheel Simulation</h1>
+      <h1 className="mb-6 text-3xl font-bold">Birthday's Roulette</h1>
       
-      <ConfigPanel 
+      {/* <ConfigPanel 
         config={config} 
         onConfigChange={setConfig} 
         show={showConfig} 
         onToggleShow={toggleConfigPanel} 
-      />
+      /> */}
       
       {/* Roulette wheel and history side by side */}
       <div className="flex flex-row justify-center items-start w-full gap-4">
@@ -85,12 +85,6 @@ const App = () => {
           <ResultDisplay result={result} />
           <ResultHistory results={resultHistory} maxResults={maxHistoryResults - 1} />
         </div>
-      </div>
-      
-      <div className="mt-6 text-sm text-gray-500">
-        <p>The American roulette wheel simulation can be configured using JSON or YAML files.</p>
-        <p>Adjust the configuration parameters to customize the physics, timing, and appearance.</p>
-        <p>Click "Spin Wheel" to start or enable auto-spin in the configuration.</p>
       </div>
     </div>
   );
