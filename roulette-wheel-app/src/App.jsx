@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import RouletteWheel from './components/RouletteWheel';
 import ConfigPanel from './components/ConfigPanel';
 import ResultDisplay from './components/ResultDisplay';
@@ -14,19 +14,50 @@ const App = () => {
   // Maximum number of results to keep in history
   const maxHistoryResults = config.ui?.historySize || 10;
 
+  // We'll use a ref to store all results as they come in
+  // This persists between re-renders and state updates
+  const allResults = useRef([]);
+
   // Handle result update from wheel
   const handleResult = (newResult) => {
-    setResult(newResult);
-    // Add the new result to history (at the beginning)
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] handleResult called with: ${newResult}`);
+    
+    // When we get a new non-null result
     if (newResult !== null) {
-      setResultHistory(prevHistory => {
-        // Create a new array with the new result at the beginning
-        const newHistory = [newResult, ...prevHistory];
-        // Limit the history size
-        return newHistory.slice(0, maxHistoryResults);
-      });
+      console.log(`[${timestamp}] Processing new non-null result: ${newResult}`);
+      
+      // Add this result to our ref array
+      allResults.current.push(newResult);
+      console.log(`[${timestamp}] All results so far:`, JSON.stringify(allResults.current));
+      
+      // The latest result is displayed in the Last Result box
+      setResult(newResult);
+      console.log(`[${timestamp}] Setting current result to: ${newResult}`);
+      
+      // History should be all previous results except the most recent one
+      // since that one is shown in the Last Result box
+      if (allResults.current.length > 1) {
+        // Get all results except the most recent one
+        const historyResults = allResults.current.slice(0, -1);
+        // Reverse to get newest first, and limit to max history size
+        const displayHistory = historyResults.reverse().slice(0, maxHistoryResults - 1);
+        console.log(`[${timestamp}] Setting history to:`, JSON.stringify(displayHistory));
+        setResultHistory(displayHistory);
+      } else {
+        console.log(`[${timestamp}] No history to set yet (first result)`);  
+      }
+    } else {
+      console.log(`[${timestamp}] Ignoring null result`);
     }
   };
+  
+  // For debugging - log when result or history changes
+  useEffect(() => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] State updated - Current result: ${result}`);
+    console.log(`[${timestamp}] State updated - Result history:`, JSON.stringify(resultHistory));
+  }, [result, resultHistory]);
 
   // Toggle config panel visibility
   const toggleConfigPanel = () => {
@@ -44,16 +75,15 @@ const App = () => {
         onToggleShow={toggleConfigPanel} 
       />
       
-      <ResultDisplay result={result} show={config.ui.showResult} />
-      
       {/* Roulette wheel and history side by side */}
       <div className="flex flex-row justify-center items-start w-full gap-4">
         <div className="flex-shrink-0">
           <RouletteWheel config={config} onResult={handleResult} />
         </div>
         
-        <div className="flex-shrink-0">
-          <ResultHistory results={resultHistory} maxResults={maxHistoryResults} />
+        <div className="flex-shrink-0 flex flex-col">
+          <ResultDisplay result={result} />
+          <ResultHistory results={resultHistory} maxResults={maxHistoryResults - 1} />
         </div>
       </div>
       

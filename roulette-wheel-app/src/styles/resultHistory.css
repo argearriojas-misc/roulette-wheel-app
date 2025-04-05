@@ -117,3 +117,16 @@
   50% { opacity: 0.5; transform: scale(1.1); }
   100% { opacity: 1; transform: scale(1); }
 }
+
+/* Empty history message */
+.empty-history {
+  color: #888;
+  font-size: 0.8rem;
+  padding: 1rem 0.5rem;
+  text-align: center;
+  font-style: italic;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

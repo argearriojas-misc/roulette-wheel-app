@@ -3,7 +3,6 @@ import { getNumberColor } from '../utils/wheelData';
 import '../styles/resultHistory.css';
 
 const ResultHistory = ({ results = [], maxResults = 10 }) => {
-  if (!results.length) return null;
 
   const getNumberClass = (number) => {
     if (number === 0 || number === '00') return 'number-green';
@@ -15,16 +14,20 @@ const ResultHistory = ({ results = [], maxResults = 10 }) => {
     <div className="result-history">
       <h3>Previous Results</h3>
       <div className="history-numbers-vertical">
-        {results.slice(0, maxResults).map((number, index) => {
-          return (
-            <div 
-              key={index} 
-              className={`history-number ${getNumberClass(number)} ${index === 0 ? 'latest-result' : ''}`}
-            >
-              {number}
-            </div>
-          );
-        })}
+        {results.length > 0 ? (
+          results.slice(0, maxResults).map((number, index) => {
+            return (
+              <div 
+                key={index} 
+                className={`history-number ${getNumberClass(number)} ${index === 0 ? 'latest-result' : ''}`}
+              >
+                {number}
+              </div>
+            );
+          })
+        ) : (
+          <div className="empty-history">No previous results yet</div>
+        )}
       </div>
     </div>
   );

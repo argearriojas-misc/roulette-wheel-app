@@ -5,7 +5,7 @@ export const defaultConfig = {
     ballSpeed: 5,           // Initial ball speed
     friction: 0.98,         // Deceleration factor
     bounceFactor: 0.6,      // How much the ball bounces when hitting pocket
-    spinTime: 5000          // How long the wheel spins at full speed in ms
+    spinTime: 500          // How long the wheel spins at full speed in ms
   },
   timing: {
     waitBetweenSpins: 3000  // Wait time between auto-spins in ms

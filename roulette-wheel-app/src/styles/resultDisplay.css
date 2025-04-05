@@ -1,14 +1,14 @@
 /* Result Display Styles */
 .result-display {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 0.5rem;
   background: white;
-  border-radius: 10px;
+  border-radius: 10px 10px 0 0;
   color: black;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   transition: all 0.3s ease;
-  min-width: 200px;
+  width: 90px; /* Match the history width */
 }
 
 .result-display:hover {
@@ -17,19 +17,19 @@
 }
 
 .result-display h3 {
-  margin-bottom: 0.5rem;
-  /* font-weight: 1200; */
-  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 0.8rem;
   letter-spacing: 0.5px;
   color: rgba(0, 0, 0, 0.8);
 }
 
 .result-number {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  padding: 0.5rem;
-  width: 60px;
-  height: 60px;
+  padding: 0.25rem;
+  width: 50px;
+  height: 50px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -59,4 +59,10 @@
 .number-green {
   background: linear-gradient(135deg, #006400, #00a300);
   color: white;
+}
+
+.no-result {
+  background: linear-gradient(135deg, #333333, #555555);
+  color: #cccccc;
+  opacity: 0.7;
 }
