@@ -2,13 +2,15 @@
 .result-history {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
-  padding: 1rem;
+  padding: 0.75rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 450px;
-  margin: 1rem 0;
+  width: 90px; /* Optimized width for the vertical layout */
+  margin: 0;
   border: 1px solid #e0e0e0;
   transition: all 0.3s ease;
+  min-height: 380px; /* Match approximate wheel height */
+  display: flex;
+  flex-direction: column;
 }
 
 .result-history:hover {
@@ -24,6 +26,7 @@
   text-align: center;
 }
 
+/* Horizontal layout (old) */
 .history-numbers {
   display: flex;
   flex-wrap: wrap;
@@ -32,18 +35,31 @@
   padding: 0.5rem;
 }
 
+/* Vertical layout (new) */
+.history-numbers-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem;
+  max-height: 300px; /* Limit the height */
+  overflow-y: auto; /* Add scroll if too many numbers */
+  flex-grow: 1; /* Take up available space */
+}
+
 .history-number {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.5);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 2px 0;
 }
 
 .history-number:hover {

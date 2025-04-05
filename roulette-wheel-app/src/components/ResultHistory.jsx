@@ -14,7 +14,7 @@ const ResultHistory = ({ results = [], maxResults = 10 }) => {
   return (
     <div className="result-history">
       <h3>Previous Results</h3>
-      <div className="history-numbers">
+      <div className="history-numbers-vertical">
         {results.slice(0, maxResults).map((number, index) => {
           return (
             <div 

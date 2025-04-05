@@ -34,7 +34,7 @@ const App = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 mx-auto max-w-4xl">
+    <div className="flex flex-col items-center justify-center p-6 mx-auto max-w-5xl">
       <h1 className="mb-6 text-3xl font-bold">American Roulette Wheel Simulation</h1>
       
       <ConfigPanel 
@@ -46,9 +46,16 @@ const App = () => {
       
       <ResultDisplay result={result} show={config.ui.showResult} />
       
-      <ResultHistory results={resultHistory} maxResults={maxHistoryResults} />
-      
-      <RouletteWheel config={config} onResult={handleResult} />
+      {/* Roulette wheel and history side by side */}
+      <div className="flex flex-row justify-center items-start w-full gap-4">
+        <div className="flex-shrink-0">
+          <RouletteWheel config={config} onResult={handleResult} />
+        </div>
+        
+        <div className="flex-shrink-0">
+          <ResultHistory results={resultHistory} maxResults={maxHistoryResults} />
+        </div>
+      </div>
       
       <div className="mt-6 text-sm text-gray-500">
         <p>The American roulette wheel simulation can be configured using JSON or YAML files.</p>
