@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { wheelNumbers, getNumberColor } from '../utils/wheelData';
 import { updatePhysics, initializeWheelState, startSpinning } from '../utils/physics';
+import { determineWinningNumber } from '../utils/physics';
 
 const RouletteWheel = ({ config, onResult }) => {
   const canvasRef = useRef(null);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [wheelRotation, setWheelRotation] = useState(0);
+  // const [wheelRotation, setWheelRotation] = useState(0);
   const animationRef = useRef(null);
   const wheelState = useRef(initializeWheelState());
 
@@ -18,7 +19,7 @@ const RouletteWheel = ({ config, onResult }) => {
     // Draw the outer ring
     ctx.save();
     ctx.translate(centerX, centerY);
-    ctx.rotate(wheelRotation);
+    ctx.rotate(wheelState.current.rotation);
     
     // Draw outer circle
     ctx.beginPath();
@@ -84,9 +85,11 @@ const RouletteWheel = ({ config, onResult }) => {
     const state = wheelState.current;
     if (state.spinPhase === 'stopped' && !state.landedNumber) return;
     
+    // Calculate the ball position based on its angle
     const ballX = centerX + Math.cos(state.ballAngle) * state.ballDistance;
     const ballY = centerY + Math.sin(state.ballAngle) * state.ballDistance;
     
+    // Draw the ball
     ctx.beginPath();
     ctx.arc(ballX, ballY, config.appearance.ballSize, 0, 2 * Math.PI);
     ctx.fillStyle = '#e0e0e0';
@@ -94,6 +97,22 @@ const RouletteWheel = ({ config, onResult }) => {
     ctx.strokeStyle = '#a0a0a0';
     ctx.lineWidth = 1;
     ctx.stroke();
+    
+    // For debugging: Draw a line from center to ball to verify angle
+    if (config.appearance.showDebugInfo) {
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(ballX, ballY);
+      ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Show the current number segment
+      const currentNumber = determineWinningNumber(state.ballAngle, state.rotation);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.font = '10px Arial';
+      ctx.fillText(`Ball: ${currentNumber}`, ballX + 10, ballY + 10);
+    }
   };
 
   // Animation loop for wheel and ball
@@ -106,23 +125,60 @@ const RouletteWheel = ({ config, onResult }) => {
     const centerY = canvas.height / 2;
     const radius = config.appearance.wheelDiameter / 2;
     const state = wheelState.current;
+    const { physics } = config;
     
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Update physics if spinning
+    // Update physics
     if (state.spinPhase !== 'stopped') {
-      updatePhysics(state, config, timestamp, radius);
-      setWheelRotation(state.rotation);
+      // Update wheel rotation
+      state.rotation += state.angularVelocity;
+      // setWheelRotation(state.rotation);
       
-      // If stopped after updating, trigger result callback
-      if (state.spinPhase === 'stopped') {
-        setIsSpinning(false);
-        if (onResult) onResult(state.landedNumber);
+      // Update ball position
+      state.ballAngle += state.ballVelocity;
+      
+      // Apply physics based on phase
+      if (state.spinPhase === 'accelerating') {
+        state.angularVelocity = Math.min(physics.wheelSpeed, state.angularVelocity + 0.002);
+        state.ballVelocity = Math.min(physics.ballSpeed, state.ballVelocity + 0.01);
+        state.ballDistance = Math.min(radius - 20, state.ballDistance + 0.5);
         
-        // Auto-spin if configured
-        if (config.ui.autoSpin) {
-          setTimeout(spinWheel, config.timing.waitBetweenSpins);
+        if (timestamp - state.spinStartTime > 1000) {
+          state.spinPhase = 'spinning';
+        }
+      } else if (state.spinPhase === 'spinning') {
+        if (timestamp - state.spinStartTime > physics.spinTime) {
+          state.spinPhase = 'decelerating';
+        }
+      } else if (state.spinPhase === 'decelerating') {
+        // Slow down the wheel and ball
+        state.angularVelocity *= physics.friction;
+        state.ballVelocity *= physics.friction;
+        
+        // Ball moves inward as it slows
+        if (state.ballDistance > 70) {
+          state.ballDistance -= 0.3;
+        }
+        
+        // Ball bounces in pockets as it slows down
+        if (state.ballVelocity < 0.1) {
+          state.ballVelocity += (Math.sin(state.ballAngle * 10) * 0.01) * physics.bounceFactor;
+        }
+        
+        // Stop when very slow
+        if (Math.abs(state.angularVelocity) < 0.001 && Math.abs(state.ballVelocity) < 0.001) {
+          state.spinPhase = 'stopped';
+          // Use updated winning number determination that accounts for wheel rotation
+          state.landedNumber = determineWinningNumber(state.ballAngle, state.rotation);
+          onResult(state.landedNumber);
+          setIsSpinning(false);
+          
+          // Auto-spin if configured
+          if (config.ui.autoSpin) {
+            setTimeout(spinWheel, config.timing.waitBetweenSpins);
+          }
         }
       }
     }

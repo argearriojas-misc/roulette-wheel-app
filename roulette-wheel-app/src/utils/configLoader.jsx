@@ -1,7 +1,7 @@
 // Default configuration
 export const defaultConfig = {
   physics: {
-    wheelSpeed: 0.2,        // Initial angular velocity
+    wheelSpeed: -0.1,        // Initial angular velocity
     ballSpeed: 5,           // Initial ball speed
     friction: 0.98,         // Deceleration factor
     bounceFactor: 0.6,      // How much the ball bounces when hitting pocket

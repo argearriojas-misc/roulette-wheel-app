@@ -100,17 +100,20 @@ export const startSpinning = (state) => {
  * @param {number} ballAngle - Current ball angle
  * @returns {number|string} The winning number
  */
-export const determineWinningNumber = (ballAngle) => {
+export const determineWinningNumber = (ballAngle, wheelRotation) => {
   const totalNumbers = wheelNumbers.length;
   const anglePerNumber = (2 * Math.PI) / totalNumbers;
   
+  // Calculate the effective angle considering both the ball position and wheel rotation
+  // The wheel rotation is subtracted because the wheel rotates in the opposite direction of the ball
+  let effectiveAngle = (ballAngle - wheelRotation) % (2 * Math.PI);
+  
   // Normalize the angle to positive value in [0, 2π]
-  let normalizedAngle = ballAngle % (2 * Math.PI);
-  if (normalizedAngle < 0) normalizedAngle += (2 * Math.PI);
+  if (effectiveAngle < 0) effectiveAngle += (2 * Math.PI);
   
   // Calculate the index in the wheel array
-  let index = Math.floor(normalizedAngle / anglePerNumber);
-  index = (totalNumbers - index) % totalNumbers; // Reverse direction
-  
+  const index = Math.floor(effectiveAngle / anglePerNumber);
+
+  // Get the number at this position
   return wheelNumbers[index];
 };
