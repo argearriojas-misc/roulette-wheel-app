@@ -1,7 +1,7 @@
 /* Result History Styles */
 .result-history {
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
+  border-radius: 0 0 10px 10px;
   padding: 0.75rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 90px; /* Optimized width for the vertical layout */
@@ -11,6 +11,7 @@
   min-height: 380px; /* Match approximate wheel height */
   display: flex;
   flex-direction: column;
+  /* height: 100%; */
 }
 
 .result-history:hover {
@@ -18,7 +19,7 @@
 }
 
 .result-history h3 {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #333;
   margin-bottom: 0.75rem;
   border-bottom: 1px solid #eee;
@@ -42,7 +43,6 @@
   gap: 0.5rem;
   align-items: center;
   padding: 0.5rem;
-  max-height: 300px; /* Limit the height */
   overflow-y: auto; /* Add scroll if too many numbers */
   flex-grow: 1; /* Take up available space */
 }
