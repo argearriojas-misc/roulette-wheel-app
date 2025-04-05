@@ -4,6 +4,7 @@ import ConfigPanel from './components/ConfigPanel';
 import ResultDisplay from './components/ResultDisplay';
 import ResultHistory from './components/ResultHistory';
 import { defaultConfig } from './utils/configLoader';
+import { setCookie, getCookie } from './utils/cookieUtils';
 
 const App = () => {
   const [config, setConfig] = useState(defaultConfig);
@@ -17,6 +18,35 @@ const App = () => {
   // We'll use a ref to store all results as they come in
   // This persists between re-renders and state updates
   const allResults = useRef([]);
+
+  // Load saved results from cookie on component mount
+  useEffect(() => {
+    try {
+      const savedResultsJson = getCookie('rouletteResults');
+      if (savedResultsJson) {
+        const savedResults = JSON.parse(savedResultsJson);
+        console.log('[App] Loaded saved results from cookie:', savedResults);
+        
+        if (Array.isArray(savedResults) && savedResults.length > 0) {
+          // Set our ref to the saved results
+          allResults.current = savedResults;
+          
+          // Set the latest result
+          const latestResult = savedResults[savedResults.length - 1];
+          setResult(latestResult);
+          
+          // Set history (all except the latest)
+          if (savedResults.length > 1) {
+            const historyResults = savedResults.slice(0, -1);
+            const displayHistory = historyResults.reverse().slice(0, maxHistoryResults - 1);
+            setResultHistory(displayHistory);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('[App] Error loading saved results:', error);
+    }
+  }, [maxHistoryResults]);
 
   // Handle result update from wheel
   const handleResult = (newResult) => {
@@ -52,11 +82,21 @@ const App = () => {
     }
   };
   
-  // For debugging - log when result or history changes
+  // Save results to cookie when they change
   useEffect(() => {
     const timestamp = new Date().toISOString();
     console.log(`[${timestamp}] State updated - Current result: ${result}`);
     console.log(`[${timestamp}] State updated - Result history:`, JSON.stringify(resultHistory));
+    
+    // Save all results to cookie
+    if (allResults.current.length > 0) {
+      try {
+        setCookie('rouletteResults', JSON.stringify(allResults.current));
+        console.log(`[${timestamp}] Saved results to cookie:`, JSON.stringify(allResults.current));
+      } catch (error) {
+        console.error(`[${timestamp}] Error saving results to cookie:`, error);
+      }
+    }
   }, [result, resultHistory]);
 
   // Toggle config panel visibility
