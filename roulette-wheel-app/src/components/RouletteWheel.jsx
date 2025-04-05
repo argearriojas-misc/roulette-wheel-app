@@ -3,7 +3,7 @@ import { wheelNumbers, getNumberColor } from '../utils/wheelData';
 import { updatePhysics, initializeWheelState, startSpinning } from '../utils/physics';
 import { determineWinningNumber } from '../utils/physics';
 
-const RouletteWheel = ({ config, onResult }) => {
+const RouletteWheel = ({ config, onResult, onSpinStart, onSpinComplete }) => {
   const canvasRef = useRef(null);
   const [isSpinning, setIsSpinning] = useState(false);
   // const [wheelRotation, setWheelRotation] = useState(0);
@@ -178,6 +178,9 @@ const RouletteWheel = ({ config, onResult }) => {
           onResult(state.landedNumber);
           setIsSpinning(false);
           
+          // Notify parent component that spin is complete
+          if (onSpinComplete) onSpinComplete();
+          
           // Auto-spin if configured
           if (config.ui.autoSpin) {
             setTimeout(spinWheel, config.timing.waitBetweenSpins);
@@ -204,6 +207,12 @@ const RouletteWheel = ({ config, onResult }) => {
     const centerY = canvas.height / 2;
     const radius = config.appearance.wheelDiameter / 2;
     
+    // Add event listener for the custom spin-wheel event
+    const handleSpinEvent = () => {
+      spinWheel();
+    };
+    document.addEventListener('spin-wheel', handleSpinEvent);
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawWheel(ctx, centerX, centerY, radius);
     
@@ -220,12 +229,16 @@ const RouletteWheel = ({ config, onResult }) => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      document.removeEventListener('spin-wheel', handleSpinEvent);
     };
   }, [config]); // Re-initialize when config changes
 
   // Start spinning the wheel
   const spinWheel = () => {
     if (isSpinning) return;
+    
+    // Notify parent component that spin has started
+    if (onSpinStart) onSpinStart();
     
     setIsSpinning(true);
     if (onResult) onResult(null); // Clear previous result
@@ -242,15 +255,7 @@ const RouletteWheel = ({ config, onResult }) => {
         className="mb-4 bg-gray-200 rounded-full"
       />
       
-      {config.ui.showRunButton && (
-        <button
-          onClick={spinWheel}
-          disabled={isSpinning}
-          className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 disabled:bg-gray-400"
-        >
-          {isSpinning ? 'Spinning...' : 'Spin Wheel'}
-        </button>
-      )}
+      {/* Removed spin button - now in App component */}
     </div>
   );
 };

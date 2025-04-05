@@ -1,0 +1,74 @@
+/* Common button styles for the application */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 160px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Primary button - for main actions like spinning */
+.btn-primary {
+  background-color: #3b82f6; /* blue-500 */
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb; /* blue-600 */
+}
+
+.btn-primary:active {
+  background-color: #1d4ed8; /* blue-700 */
+}
+
+/* Secondary button - for actions like showing stats */
+.btn-secondary {
+  background-color: #333;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #444;
+}
+
+.btn-secondary:active {
+  background-color: #222;
+}
+
+/* Icon in buttons */
+.btn svg {
+  margin-right: 8px;
+}
+
+/* Button container - for organizing buttons */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 10px;
+  width: 100%;
+}

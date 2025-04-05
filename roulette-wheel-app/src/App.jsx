@@ -9,6 +9,7 @@ import { setCookie, getCookie } from './utils/cookieUtils';
 
 // Import modal styles
 import './styles/modal.css';
+import './styles/buttons.css';
 
 const App = () => {
   const [config, setConfig] = useState(defaultConfig);
@@ -16,6 +17,7 @@ const App = () => {
   const [resultHistory, setResultHistory] = useState([]);
   const [showConfig, setShowConfig] = useState(false);
   const [showHistogram, setShowHistogram] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
   
   // Maximum number of results to keep in history
   const maxHistoryResults = config.ui?.historySize || 10;
@@ -128,7 +130,12 @@ const App = () => {
       {/* Roulette wheel and history side by side */}
       <div className="flex">
         <div>
-          <RouletteWheel config={config} onResult={handleResult} />
+          <RouletteWheel 
+            config={config} 
+            onResult={handleResult}
+            onSpinStart={() => setIsSpinning(true)}
+            onSpinComplete={() => setIsSpinning(false)}
+          />
         </div>
         
         <div className="flex flex-col ml-16">
@@ -137,16 +144,30 @@ const App = () => {
         </div>
       </div>
 
-      {/* Stats button */}
-      <button 
-        className="stats-button"
-        onClick={toggleHistogram}
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M0 14h16v2H0v-2zm2-10h2v8H2V4zm4 2h2v6H6V6zm4-4h2v10h-2V2z"/>
-        </svg>
-        Show Statistics
-      </button>
+      {/* Action buttons */}
+      <div className="button-container">
+        <button 
+          className="btn btn-primary"
+          onClick={() => {
+            setIsSpinning(true);
+            // The actual spinning is handled by RouletteWheel's internal animation
+            document.dispatchEvent(new CustomEvent('spin-wheel'));
+          }}
+          disabled={isSpinning}
+        >
+          {isSpinning ? 'Spinning...' : 'Spin Wheel'}
+        </button>
+        
+        <button 
+          className="btn btn-secondary"
+          onClick={toggleHistogram}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M0 14h16v2H0v-2zm2-10h2v8H2V4zm4 2h2v6H6V6zm4-4h2v10h-2V2z"/>
+          </svg>
+          Show Statistics
+        </button>
+      </div>
 
       {/* Results histogram modal */}
       {showHistogram && (

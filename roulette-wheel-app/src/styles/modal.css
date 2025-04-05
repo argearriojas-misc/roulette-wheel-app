@@ -87,26 +87,4 @@
   border-radius: 6px;
 }
 
-/* Button for opening the modal */
-.stats-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 16px;
-  background-color: #444;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 20px;
-}
-
-.stats-button:hover {
-  background-color: #555;
-}
-
-.stats-button svg {
-  margin-right: 6px;
-}
+/* Modal styling is now separate from button styling */
