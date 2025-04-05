@@ -1,0 +1,190 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { wheelNumbers, getNumberColor } from '../utils/wheelData';
+import { updatePhysics, initializeWheelState, startSpinning } from '../utils/physics';
+
+const RouletteWheel = ({ config, onResult }) => {
+  const canvasRef = useRef(null);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [wheelRotation, setWheelRotation] = useState(0);
+  const animationRef = useRef(null);
+  const wheelState = useRef(initializeWheelState());
+
+  // Draw the roulette wheel
+  const drawWheel = (ctx, centerX, centerY, radius) => {
+    const { appearance } = config;
+    const totalNumbers = wheelNumbers.length;
+    const anglePerNumber = (2 * Math.PI) / totalNumbers;
+    
+    // Draw the outer ring
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(wheelRotation);
+    
+    // Draw outer circle
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = '#321e10'; // Dark wood color
+    ctx.fill();
+    ctx.strokeStyle = '#c0a080';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // Draw number pockets
+    wheelNumbers.forEach((number, i) => {
+      const angle = i * anglePerNumber;
+      
+      // Draw pocket
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, radius - 10, angle, angle + anglePerNumber);
+      ctx.closePath();
+      ctx.fillStyle = getNumberColor(number);
+      ctx.fill();
+      ctx.strokeStyle = '#c0a080';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Draw number text
+      if (appearance.showNumbers) {
+        ctx.save();
+        ctx.rotate(angle + anglePerNumber / 2);
+        ctx.translate(0, -radius + 30);
+        ctx.rotate(Math.PI / 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(number.toString(), 0, 0);
+        ctx.restore();
+      }
+    });
+    
+    // Draw center
+    ctx.beginPath();
+    ctx.arc(0, 0, 30, 0, 2 * Math.PI);
+    ctx.fillStyle = '#321e10';
+    ctx.fill();
+    ctx.strokeStyle = '#c0a080';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    ctx.restore();
+  };
+
+  // Draw the ball
+  const drawBall = (ctx, centerX, centerY, radius) => {
+    const state = wheelState.current;
+    if (state.spinPhase === 'stopped' && !state.landedNumber) return;
+    
+    const ballX = centerX + Math.cos(state.ballAngle) * state.ballDistance;
+    const ballY = centerY + Math.sin(state.ballAngle) * state.ballDistance;
+    
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, config.appearance.ballSize, 0, 2 * Math.PI);
+    ctx.fillStyle = '#e0e0e0';
+    ctx.fill();
+    ctx.strokeStyle = '#a0a0a0';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  };
+
+  // Animation loop for wheel and ball
+  const animate = (timestamp) => {
+    if (!canvasRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = config.appearance.wheelDiameter / 2;
+    const state = wheelState.current;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Update physics if spinning
+    if (state.spinPhase !== 'stopped') {
+      updatePhysics(state, config, timestamp, radius);
+      setWheelRotation(state.rotation);
+      
+      // If stopped after updating, trigger result callback
+      if (state.spinPhase === 'stopped') {
+        setIsSpinning(false);
+        if (onResult) onResult(state.landedNumber);
+        
+        // Auto-spin if configured
+        if (config.ui.autoSpin) {
+          setTimeout(spinWheel, config.timing.waitBetweenSpins);
+        }
+      }
+    }
+    
+    // Draw wheel and ball
+    drawWheel(ctx, centerX, centerY, radius);
+    drawBall(ctx, centerX, centerY, radius);
+    
+    // Continue animation
+    animationRef.current = requestAnimationFrame(animate);
+  };
+
+  // Initialize the canvas
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = config.appearance.wheelDiameter / 2;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawWheel(ctx, centerX, centerY, radius);
+    
+    // Start animation loop
+    animationRef.current = requestAnimationFrame(animate);
+    
+    // Auto-spin on start if configured
+    if (config.ui.autoSpin) {
+      setTimeout(spinWheel, 1000);
+    }
+    
+    // Clean up
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [config]); // Re-initialize when config changes
+
+  // Start spinning the wheel
+  const spinWheel = () => {
+    if (isSpinning) return;
+    
+    setIsSpinning(true);
+    if (onResult) onResult(null); // Clear previous result
+    
+    wheelState.current = startSpinning(wheelState.current);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg">
+      <canvas
+        ref={canvasRef}
+        width={config.appearance.wheelDiameter + 40}
+        height={config.appearance.wheelDiameter + 40}
+        className="mb-4 bg-gray-200 rounded-full"
+      />
+      
+      {config.ui.showRunButton && (
+        <button
+          onClick={spinWheel}
+          disabled={isSpinning}
+          className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          {isSpinning ? 'Spinning...' : 'Spin Wheel'}
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default RouletteWheel;
