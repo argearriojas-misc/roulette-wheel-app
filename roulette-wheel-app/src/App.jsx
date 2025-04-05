@@ -65,8 +65,8 @@ const App = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 mx-auto max-w-5xl">
-      <h1 className="mb-6 text-3xl font-bold">Birthday's Roulette</h1>
+    <div className="flex flex-col items-center justify-center p-6 mx-auto max-w-4xl">
+      <h1 className="mb-6 text-3xl font-bold">Argenis' Birthday Roulette</h1>
       
       {/* <ConfigPanel 
         config={config} 
@@ -76,12 +76,12 @@ const App = () => {
       /> */}
       
       {/* Roulette wheel and history side by side */}
-      <div className="flex flex-row justify-center items-start w-full gap-4">
-        <div className="flex-shrink-0">
+      <div className="flex">
+        <div>
           <RouletteWheel config={config} onResult={handleResult} />
         </div>
         
-        <div className="flex-shrink-0 flex flex-col">
+        <div className="flex flex-col ml-16">
           <ResultDisplay result={result} />
           <ResultHistory results={resultHistory} maxResults={maxHistoryResults - 1} />
         </div>
