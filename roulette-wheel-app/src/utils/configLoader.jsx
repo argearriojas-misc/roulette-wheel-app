@@ -2,13 +2,13 @@
 export const defaultConfig = {
   physics: {
     wheelSpeed: -0.1,        // Initial angular velocity
-    ballSpeed: 5,           // Initial ball speed
-    friction: 0.98,         // Deceleration factor
+    ballSpeed: 1,           // Initial ball speed
+    friction: 0.99,         // Deceleration factor
     bounceFactor: 0.6,      // How much the ball bounces when hitting pocket
-    spinTime: 500          // How long the wheel spins at full speed in ms
+    spinTime: 5000          // How long the wheel spins at full speed in ms
   },
   timing: {
-    waitBetweenSpins: 3000  // Wait time between auto-spins in ms
+    waitBetweenSpins: 1000 * 60 * 3 // Wait time between auto-spins in ms
   },
   ui: {
     showRunButton: true,    // Whether to show manual spin button
@@ -17,11 +17,11 @@ export const defaultConfig = {
     historySize: 10         // Number of previous results to display in history
   },
   appearance: {
-    wheelDiameter: 750,     // Wheel diameter in pixels
+    wheelDiameter: 500,     // Wheel diameter in pixels
     ballSize: 8,            // Ball radius in pixels
     pocketSize: 25,         // Size of each number pocket
     showNumbers: true,      // Whether to show numbers on wheel
-    numberFontSize: 18,     // Font size for wheel numbers in pixels
+    numberFontSize: 20,     // Font size for wheel numbers in pixels
     numberFont: 'Arial'     // Font family for wheel numbers
   }
 };

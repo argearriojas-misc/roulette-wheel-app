@@ -129,6 +129,8 @@ const RouletteWheel = ({ config, onResult, onSpinStart, onSpinComplete }) => {
     const radius = config.appearance.wheelDiameter / 2;
     const state = wheelState.current;
     const { physics } = config;
+    state.ballDistance = Math.max(100, Math.min(radius - 20, state.ballVelocity * 1000));
+
     
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -146,7 +148,6 @@ const RouletteWheel = ({ config, onResult, onSpinStart, onSpinComplete }) => {
       if (state.spinPhase === 'accelerating') {
         state.angularVelocity = Math.min(physics.wheelSpeed, state.angularVelocity + 0.002);
         state.ballVelocity = Math.min(physics.ballSpeed, state.ballVelocity + 0.01);
-        state.ballDistance = Math.min(radius - 20, state.ballDistance + 0.5);
         
         if (timestamp - state.spinStartTime > 1000) {
           state.spinPhase = 'spinning';
@@ -160,18 +161,13 @@ const RouletteWheel = ({ config, onResult, onSpinStart, onSpinComplete }) => {
         state.angularVelocity *= physics.friction;
         state.ballVelocity *= physics.friction;
         
-        // Ball moves inward as it slows
-        if (state.ballDistance > 70) {
-          state.ballDistance -= 0.3;
-        }
-        
         // Ball bounces in pockets as it slows down
         if (state.ballVelocity < 0.1) {
           state.ballVelocity += (Math.sin(state.ballAngle * 10) * 0.01) * physics.bounceFactor;
         }
         
         // Stop when very slow
-        if (Math.abs(state.angularVelocity) < 0.001 && Math.abs(state.ballVelocity) < 0.001) {
+        if (Math.abs(state.angularVelocity) < 0.001 && Math.abs(state.ballVelocity) < 0.00001) {
           state.spinPhase = 'stopped';
           // Use updated winning number determination that accounts for wheel rotation
           state.landedNumber = determineWinningNumber(state.ballAngle, state.rotation);

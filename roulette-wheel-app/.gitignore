@@ -1,3 +1,9 @@
+# hidden files
+.*
+
+# exceptions
+!.git*
+
 # Logs
 logs
 *.log

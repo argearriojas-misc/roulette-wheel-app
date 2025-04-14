@@ -1,4 +1,4 @@
-# Argenis' Birthday Roulette
+# The Birthday Roulette
 
 A visually appealing and interactive roulette wheel web application built with React and Vite. This project features a realistic roulette wheel simulation with physics-based animations, result tracking, and statistical analysis.
 

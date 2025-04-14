@@ -118,7 +118,7 @@ const App = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-6 mx-auto max-w-4xl">
-      <h1 className="mb-6 text-3xl font-bold">Argenis' Birthday Roulette</h1>
+      <h1 className="mb-6 text-3xl font-bold">The Birthday Roulette</h1>
       
       {/* <ConfigPanel 
         config={config} 
