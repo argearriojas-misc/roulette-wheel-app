@@ -50,6 +50,33 @@ node --version
 npm --version
 ```
 
+**For Windows**:
+
+1. **Install NVM for Windows**:
+   - Download the latest installer from [NVM for Windows](https://github.com/coreybutler/nvm-windows/releases)
+   - Look for the `nvm-setup.exe` file under Assets in the latest release
+   - Run the installer and follow the prompts
+
+2. **After installation, open a new Command Prompt or PowerShell window and verify NVM is installed**:
+
+```bash
+nvm version
+```
+
+3. **Install the latest LTS version of Node.js**:
+
+```bash
+nvm install lts
+nvm use lts
+```
+
+4. **Verify Node.js and npm are installed**:
+
+```bash
+node --version
+npm --version
+```
+
 ### Installation
 
 ```bash
