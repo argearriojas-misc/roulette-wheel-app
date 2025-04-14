@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { wheelNumbers, getNumberColor } from '../utils/wheelData';
-import { updatePhysics, initializeWheelState, startSpinning } from '../utils/physics';
+import { initializeWheelState, startSpinning } from '../utils/physics';
 import { determineWinningNumber } from '../utils/physics';
 
 const RouletteWheel = ({ config, onResult, onSpinStart, onSpinComplete }) => {
